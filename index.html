@@ -168,13 +168,13 @@ function U(id,zh,type,cats){ENCHANTS.push({id,en:'',zh,type,rank:null,cats,stats
 
 // --- 武器
 E('Tragic','悲劇的',P,3,['weapon'],{att:700,spd:8,crit:8,bal:4});
-E('Revenge','',P,4,['weapon'],{att:550,spd:8,crit:6,bal:2});
+E('Revenge','復仇的',P,4,['weapon'],{att:550,spd:8,crit:6,bal:2});
 E('Brutal','',P,5,['weapon'],{att:430,spd:8,crit:4,bal:2});
 E('Chaotic','渾沌的',P,6,['weapon'],{att:340,spd:4,crit:9,cres:-4});
 E('Calm','',P,6,['weapon','rhod'],{att:-280,spd:4,bal:5},'高機率恢復 125 SP');
 E('Echo','迴響',S,3,['weapon'],{att:1060,spd:3,crit:13,bal:-1});
 E('Strike','一擊',S,4,['weapon'],{att:1030,spd:3,crit:10,bal:-1});
-E('Enmity','',S,5,['weapon'],{att:1000,spd:3,crit:7,bal:-1});
+E('Enmity','怨恨',S,5,['weapon'],{att:1000,spd:3,crit:7,bal:-1});
 E('Conviction','',S,6,['weapon'],{att:970,spd:3,crit:5,bal:-1});
 // --- 防具
 E('Steeping','渲染的',P,3,['hands','feet'],{att:145,def:300,crit:6,cres:-1,bal:7});
@@ -182,10 +182,10 @@ E('Eternal','永恆的',P,3,['chest'],{def:160,hp:100,stam:8,crit:9,cres:14,bal:
 E('Bountiful','滿盈的',P,3,['head','legs'],{att:245,def:200,spd:2,crit:3,cres:11,bal:6});
 E('Stylish','',P,4,['hands','feet'],{att:145,def:300,spd:2,crit:4,cres:-1,bal:5});
 E('Prophetic','',P,4,['chest'],{def:160,hp:100,stam:8,crit:7,cres:12,bal:-3});
-E('Forgotten','',P,4,['head','legs'],{att:245,def:200,spd:2,crit:3,cres:8,bal:4});
+E('Forgotten','被遺忘的',P,4,['head','legs'],{att:245,def:200,spd:2,crit:3,cres:8,bal:4});
 E('Cool','',P,5,['head','legs'],{att:245,def:200,spd:2,crit:3,cres:6,bal:3});
-E('Dignified','',P,5,['chest'],{def:160,hp:100,stam:8,crit:6,cres:10,bal:-3});
-E('Sorrowful','',P,5,['hands','feet'],{att:145,def:300,spd:2,crit:3,cres:-1,bal:4});
+E('Dignified','高尚的',P,5,['chest'],{def:160,hp:100,stam:8,crit:6,cres:10,bal:-3});
+E('Sorrowful','悲痛的',P,5,['hands','feet'],{att:145,def:300,spd:2,crit:3,cres:-1,bal:4});
 E('Weeping','',P,6,['hands','feet'],{att:145,def:300,spd:2,crit:2,cres:-1,bal:3});
 E('Infinite','',P,6,['chest'],{def:160,hp:100,stam:8,crit:5,cres:8,bal:-3});
 E('Heartless','',P,6,['head','legs'],{att:245,def:200,spd:2,crit:2,cres:4,bal:2});
@@ -194,17 +194,17 @@ E('Trial','試煉',S,4,['chest'],{def:120,stam:5,crit:12,cres:13,bal:-1});
 E('Solitude','孤獨',S,4,['hands','feet'],{att:465,def:-300,spd:1,cres:8,bal:10});
 E('Fighting Spirit','鬥魂',S,4,['head','legs'],{att:285,def:280,crit:8,cres:10});
 E('Advance','',S,5,['head','legs'],{att:285,def:280,crit:5,cres:7});
-E('Lament','',S,5,['chest'],{def:120,stam:5,crit:9,cres:10,bal:-1});
-E('Frenzy','',S,5,['hands','feet'],{att:465,def:-300,spd:1,cres:5,bal:7});
+E('Lament','悲嘆',S,5,['chest'],{def:120,stam:5,crit:9,cres:10,bal:-1});
+E('Frenzy','狂暴',S,5,['hands','feet'],{att:465,def:-300,spd:1,cres:5,bal:7});
 E('Soul','',S,6,['hands','feet'],{att:465,def:-300,spd:1,cres:3,bal:5});
 E('Dash','',S,6,[...ARMOR,'rhod'],{},'觸發時增加攻擊速度');
 E('Capture','',S,6,['head','legs'],{att:285,def:280,crit:3,cres:5});
 // --- 護符（盾牌/魔導書/巨盾/圖騰）
 E('Hollow','虛無的',P,3,['aux'],{def:1000,spd:1,crit:4,cres:8});
-E('Victorious','',P,4,['aux'],{def:800,spd:1,crit:2,cres:5});
+E('Victorious','勝者的',P,4,['aux'],{def:800,spd:1,crit:2,cres:5});
 E('Raging','',P,5,['aux'],{def:800,spd:1,crit:1,cres:3});
 E('Praise','讚揚',S,4,['aux'],{att:230,crit:4,cres:9});
-E('Madness','',S,5,['aux'],{att:230,crit:2,cres:7});
+E('Madness','瘋狂',S,5,['aux'],{att:230,crit:2,cres:7});
 // --- 技能飾品（神器）
 const ART3={att:700,spd:5,crit:2,bal:2,add:50}, ART4={att:450,spd:5,cres:5};
 E('Indomitable','',P,3,['artifact'],ART3,'使用神器時霸體 20 秒、受傷 -50%');
@@ -215,25 +215,25 @@ E('Cyclical','',P,3,['artifact'],ART3,'傷害轉 SP');
 E('Petrify','',P,4,['artifact'],ART4,'霸體、受傷 -30%');
 E('Fading','',P,4,['artifact'],ART4,'傷害轉 SP');
 E('Destructive','',P,4,['artifact'],ART4,'追加傷害 +5%');
-E('Consume','',P,4,['artifact'],ART4,'依敵人剩餘生命增傷（最高 14%）');
+E('Consume','吞噬的',P,4,['artifact'],ART4,'依敵人剩餘生命增傷（最高 14%）');
 E('Advent','降臨',S,4,['artifact'],{att:450,crit:2,bal:2,cres:5});
 // --- 飾品通用
 E('Tempestuous','狂風的',P,4,ACC,{att:700,spd:5,crit:-4,bal:-4});
 E('Veiled','隱藏的',P,4,ACC,{att:700,spd:1,cres:7});
-E('Twisted','',P,5,ACC,{att:450,spd:1,cres:5});
-E('Reflection','思念',S,4,ACC,{bal:1,def:500,stam:2,cres:5});
+E('Twisted','扭曲的',P,5,ACC,{att:450,spd:1,cres:5});
+E('Reflection','思念',S,4,[...ACC,'artifact'],{bal:1,def:500,stam:2,cres:5});
 // 波動在遊戲截圖中也出現在技能飾品上，因此一併開放
 E('Wave','波動',S,4,[...ACC,'artifact'],{att:300,cres:3},'持續微幅恢復體力 Lv.3');
-E('Irate','',S,5,ACC,{def:400,stam:2,cres:2});
+E('Irate','暴怒',S,5,ACC,{def:400,stam:2,cres:2});
 // --- 胸針
 E('Transcendent','超越的',P,4,['brooch'],{att:600,spd:1,crit:2,bal:2,cres:10,add:150});
-E('Space Time','',P,5,['brooch'],{att:450,spd:1,cres:5,add:100});
+E('Space Time','時空的',P,5,['brooch'],{att:450,spd:1,cres:5,add:100});
 // --- 腰帶
 E('Withered','乾涸的',P,3,['belt'],{spd:1,bal:4,stam:5,crit:6,cres:-3});
-E('Ancient','',P,4,['belt'],{spd:1,bal:2,stam:5,crit:4,cres:-3});
+E('Ancient','古代的',P,4,['belt'],{spd:1,bal:2,stam:5,crit:4,cres:-3});
 E('Vehement','',P,5,['belt'],{stam:5,spd:1,crit:3,cres:-3,bal:1});
 E('Fate','命運',S,4,['ring','belt'],{att:400,crit:4,bal:4});
-E('Mystery','',S,5,['ring','belt'],{att:200,crit:2,bal:2});
+E('Mystery','神秘',S,5,['ring','belt'],{att:200,crit:2,bal:2});
 // --- 戒指
 E('Wandering','徬徨的',P,3,['ring'],{bal:12,cres:5,hp:-450});
 E('Adversarial','對立的',P,4,['ring'],{bal:9,cres:5,hp:-450});
@@ -246,7 +246,7 @@ E('Shrewd','',P,5,['rhod'],RH5,'有機率恢復 125 SP');
 E('Concerted','',P,6,['rhod'],RH6,'高機率恢復 125 SP（CD 40 秒）');
 E('Peaceful','',P,6,['rhod'],RH6,'每秒恢復 2 MP');
 E('Clash','衝突',S,5,['rhod'],{crit:2,brk:100},'觸發時增加攻速（CD 30 秒）');
-E('Charge','',S,5,['rhod'],{crit:2,brk:100},'觸發時增加攻速');
+E('Charge','突進',S,5,['rhod'],{crit:2,brk:100},'觸發時增加攻速');
 E('Outburst','',S,6,['rhod'],{},'觸發時增加攻速（CD 30 秒）');
 // --- 低階（Rank 7 以下）：只在「已在插槽中」時用於切換，不會被建議為新捲軸
 E('Bloodlust','花瓣',S,'A',['weapon'],{bal:3,spd:5,att:150});
@@ -255,6 +255,8 @@ E('Well-balanced','保持平衡的',P,8,ARMOR,{spd:2,crit:1,cres:-1,bal:1});
 E('Fast','迅速的',P,8,ACC,{spd:5,bal:-8});
 // --- 截圖出現但無數值資料
 U('?熱心','熱心',S,['head','chest','legs']);
+U('?熱情','熱情',S,ACC);
+U('?心靈','心靈',S,ACC);
 
 const EMAP=Object.fromEntries(ENCHANTS.map(e=>[e.id,e]));
 const GOOD_INF=['crit','bal','spd'];
@@ -421,7 +423,7 @@ function buildPositions(st,tkeys,allowInf=true){
     const g=st.gear[slot.id];
     for(const part of slot.noEnchant?[]:['pre','suf']){
       const curId=g[part],cur=EMAP[curId];
-      if(cur&&cur.unknown){warns.push(`${slot.zh} ${PARTZ[part]}：目前的「${cur.zh}」沒有數值資料，此欄不列入方案`);continue}
+      if(cur&&cur.unknown){warns.push(`${slot.zh} ${PARTZ[part]}：目前的「${cur.zh}」是 Rank 8 卷、沒有數值資料，此欄不列入方案`);continue}
       const base=cur?cur.stats:{};
       const opts=[];
       for(const e of ENCHANTS){
@@ -613,7 +615,11 @@ const RECOG=(()=>{
     if(segs.length<20)return null;
     const cellW=median(segs.map(s=>s.x1-s.x0));
     const good=segs.filter(s=>Math.abs((s.x1-s.x0)-cellW)<=cellW*0.08);
-    return {cellW,xs:cluster(good.map(s=>s.x0),cellW*0.2)};
+    // 每個欄位候選要有足夠多「列」支持，排除按鈕、分頁標籤等單一藍色區塊
+    const xs=cluster(good.map(s=>s.x0),cellW*0.2);
+    const support=x=>good.filter(s=>Math.abs(s.x0-x)<=cellW*0.1).length;
+    const sup=xs.map(support),maxSup=Math.max(...sup);
+    return {cellW,xs:xs.filter((x,i)=>sup[i]>=maxSup*0.15)};
   }
   function buildLayout(img,g,nRows=15){
     const {cellW,xs}=g,sorted=[...xs].sort((a,b)=>a-b);
@@ -696,13 +702,16 @@ const RECOG=(()=>{
   // ---- 文字比對 ----
   function lcs(a,b){const m=a.length,n=b.length,dp=Array.from({length:m+1},()=>new Array(n+1).fill(0));
     for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]+1:Math.max(dp[i-1][j],dp[i][j-1]);return dp[m][n]}
-  const score=(t,c)=>{if(!t||!c)return 0;const l=lcs(t,c);return l/c.length-0.3*(t.length-l)/c.length};
+  // Dice 係數：對長短詞公平（避免「暴擊抗」被判成較短的「暴擊」）
+  const score=(t,c)=>{if(!t||!c)return 0;return 2*lcs(t,c)/(t.length+c.length)};
   function bestMatch(texts,cands){
     const sc=cands.map(c=>({key:c.key,label:c.label,s:Math.max(...texts.map(t=>score(t,c.label)))})).sort((a,b)=>b.s-a.s);
     const [a,b]=sc;if(!a||a.s<0.5)return null;
     return {key:a.key,label:a.label,s:a.s,confident:!b||a.s-b.s>=0.15};
   }
   const INF_NAMES=[['crit','暴擊'],['bal','平衡'],['spd','攻擊速度'],['cres','暴擊抵抗'],['def','防禦力'],['att','攻擊力']];
+  // 精靈合成只會出現這幾個字，用專屬白名單辨識較準
+  const INF_WL=[...new Set(INF_NAMES.map(x=>x[1]).join('')+'0123456789+')].join('');
   function parseInf(texts){
     let best=null;
     for(const t of texts){const m=t.match(/^(.*?)[+＋](\d+)/);if(!m)continue;
@@ -749,7 +758,7 @@ const RECOG=(()=>{
         if(x==null){row[part]={empty:true};tick();continue}
         const ti=cellTextImage(img,x,yc,L.cellW,L.cellH);
         if(!ti.hasText){row[part]={empty:true};tick();continue}
-        const r1=await ocr(ti,{}),r2=await ocr(ti,{whitelist});
+        const r1=await ocr(ti,{}),r2=await ocr(ti,{whitelist:part==='inf'?INF_WL:whitelist});
         const texts=[r1.text,r2.text].map(t=>(t||'').replace(/\s+/g,''));
         if(part==='inf'){const p=parseInf(texts);row.inf=p?{...p,raw:texts[0]}:{empty:!texts[1],raw:texts[0]}}
         else{const m=bestMatch(texts,part==='pre'?slot.preCands:slot.sufCands);row[part]=m?{...m,raw:texts[0]}:{raw:texts[0]}}
