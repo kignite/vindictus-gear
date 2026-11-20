@@ -907,19 +907,30 @@ function renderGear(){
 }
 
 const KIND={switch:['switch','切換插槽'],scroll:['scroll','貼新捲軸'],iswitch:['inf','切換合成'],reroll:['inf','重洗合成'],item:['scroll','換本體'],polish:['scroll','精練']};
-// 換本體後新裝備要補的東西：只列「這個方案沒有另外改動」的部分（另外改動的會各自一行）
+// 換本體時，同一格的附魔／合成改動都是「換完本體後在新裝備上做」→ 併入換本體那一行
+const MERGE_PARTS=['pre','suf','inf'];
+function swapOf(p,c){
+  if(!MERGE_PARTS.includes(c.pos.part))return null;
+  return p.changes.find(x=>x.opt.reapply&&x.opt.reapply.some(r=>r.slot===c.pos.slot.id))||null;
+}
+function mergedChanges(p,c){return p.changes.filter(x=>x!==c&&swapOf(p,x)===c)}
 function reapplyNote(c,p){
   const o=c.opt;if(!o.reapply)return '';
   const segs=[];
   for(const r of o.reapply){
-    const tag=o.reapply.length>1?(r.slot==='ring1'?'①':'②'):'',items=[];
-    const changed=part=>p.changes.some(x=>x.pos.slot.id===r.slot&&x.pos.part===part);
-    const re=r.parts.filter(({part})=>!changed(part)).map(({e})=>e.zh||e.en);
-    for(const name of re)items.push('重貼 '+name);
-    if(r.inf&&!changed('inf'))items.push('重做精靈合成');
-    segs.push(tag+['換本體',...items].join(' + '));
+    const tag=o.reapply.length>1?(r.slot==='ring1'?'①':'②'):'',items=['換本體'];
+    const chg=part=>p.changes.find(x=>x.pos.slot.id===r.slot&&x.pos.part===part);
+    for(const part of ['pre','suf']){
+      const x=chg(part),old=r.parts.find(q=>q.part===part);
+      if(x)items.push('貼 '+x.opt.alts.map(a=>a.zh||a.en).join('/'));
+      else if(old)items.push('重貼 '+(old.e.zh||old.e.en));
+    }
+    const xi=chg('inf');
+    if(xi)items.push('精靈合成洗成 '+infLabel(xi.opt.to));
+    else if(r.inf)items.push('重做精靈合成');
+    segs.push(tag+items.join(' + '));
   }
-  const n=c.cost??o.count;
+  const n=(c.cost??o.count)+mergedChanges(p,c).reduce((s,x)=>s+(x.cost??(x.opt.count||1)),0);
   return n>1?`（共 ${n} 步：${segs.join('；')}）`:'';
 }
 function changeEl(c,p){
@@ -931,8 +942,9 @@ function changeEl(c,p){
   else if(isInf){from=infLabel(o.from);to=infLabel(o.to)}
   else{from=enShort(o.from);to=o.alts.map(e=>enShort(e)+(o.kind==='scroll'?` R${e.rank}`:'')).join(' / ')}
   const steps=c.cost??(o.count||1);
+  const delta=o.reapply&&p?mergedChanges(p,c).reduce((d,x)=>{for(const k in x.opt.delta)d[k]=(d[k]||0)+x.opt.delta[k];return d},{...o.delta}):o.delta;
   return h('div',{class:'chg'},h('span',{class:'badge '+cls},txt+(steps>1&&!o.reapply?` ${steps} 步`:'')),
-    `${c.pos.slot.zh} ${PARTZ[c.pos.part]}：${from} → ${to} `,h('span',{class:'d'},`（${statStr(o.delta)}）`));
+    `${c.pos.slot.zh} ${PARTZ[c.pos.part]}：${from} → ${to} `,h('span',{class:'d'},`（${statStr(delta)}）`));
 }
 function finalEl(p,res){
   const box=h('div',{class:'final'});
@@ -968,7 +980,7 @@ function showMore(list,more){
   for(let i=shown;i<end;i++){
     const p=res.plans[i];
     list.append(h('div',{class:'plan'},h('div',{class:'idx'},'#'+(i+1)),
-      h('div',{},p.changes.map(c=>changeEl(c,p)),h('div',{class:'d'},`共 ${p.total} 步`+(p.redo?`（含重做精靈合成 ${p.redo} 次）`:''))),finalEl(p,res)));
+      h('div',{},p.changes.filter(c=>!swapOf(p,c)).map(c=>changeEl(c,p)),h('div',{class:'d'},`共 ${p.total} 步`+(p.redo?`（含重做精靈合成 ${p.redo} 次）`:''))),finalEl(p,res)));
   }
   shown=end;more.style.display=shown<res.plans.length?'':'none';
 }
