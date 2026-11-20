@@ -659,7 +659,8 @@ const RECOG=(()=>{
       const v=L(x,y)*(1-fx)*(1-fy)+L(x+1,y)*fx*(1-fy)+L(x,y+1)*(1-fx)*fy+L(x+1,y+1)*fx*fy;
       const o=(Y*W+X)*4,c=v>th?0:255;out[o]=out[o+1]=out[o+2]=c;out[o+3]=255;
     }
-    return {width:W,height:H,data:out,hasText:hi-bg>40};
+    let ix0=1e9,ix1=-1;for(let y=ya;y<yb;y++)for(let x=xa;x<xb;x++)if(lum(d,(y*w+x)*4)>th){if(x<ix0)ix0=x;if(x>ix1)ix1=x}
+    return {width:W,height:H,data:out,hasText:hi-bg>40,inkR:ix1>=ix0?(ix1-ix0+1)/ch:0};
   }
 
   // ---- 圖示簽名：內側 70%，10×10 平均色 ----
@@ -708,15 +709,31 @@ const RECOG=(()=>{
     const [a,b]=sc;if(!a||a.s<0.5)return null;
     return {key:a.key,label:a.label,s:a.s,confident:!b||a.s-b.s>=0.15};
   }
+  // 遊戲字型固定：每個中文字寬 ≈ 0.49 格高，「+」與每位數字 ≈ 0.27 格高（兩張截圖實測）
+  const CJK_W=0.49,ASCII_W=0.27,W_TOL=0.22;
+  const expW=(label,tail='')=>CJK_W*label.length+ASCII_W*tail.length;
+  const nearW=(inkR,label,tail)=>!inkR||Math.abs(expW(label,tail)-inkR)<=W_TOL;
   const INF_NAMES=[['crit','暴擊'],['bal','平衡'],['spd','攻擊速度'],['cres','暴擊抵抗'],['def','防禦力'],['att','攻擊力']];
   // 精靈合成只會出現這幾個字，用專屬白名單辨識較準
   const INF_WL=[...new Set(INF_NAMES.map(x=>x[1]).join('')+'0123456789+')].join('');
-  function parseInf(texts){
+  // 先用文字實際寬度篩掉字數不符的候選（例如「暴擊」vs「暴擊抵抗」），再比對文字
+  function parseInf(texts,inkR){
     let best=null;
     for(const t of texts){const m=t.match(/^(.*?)[+＋](\d+)/);if(!m)continue;
-      const mt=bestMatch([m[1]],INF_NAMES.map(([key,label])=>({key,label})));
+      const all=INF_NAMES.map(([key,label])=>({key,label})),tail='+'+m[2];
+      const fit=all.filter(c=>nearW(inkR,c.label,tail));
+      let mt=fit.length?bestMatch([m[1]],fit):null;
+      if(mt&&fit.filter(c=>score(m[1],c.label)>=0.5).length===1)mt.confident=true;
+      if(!mt)mt=bestMatch([m[1]],all);
       if(mt&&(!best||mt.s>best.s))best={stat:mt.key,val:+m[2],s:mt.s,confident:mt.confident}}
     return best;
+  }
+  // 字首/字尾：寬度推估字數，優先比對字數相符的候選
+  function matchName(texts,cands,inkR){
+    const n=inkR?Math.round(inkR/CJK_W):0;
+    const fit=n?cands.filter(c=>c.label.length===n):[];
+    const mt=fit.length?bestMatch(texts,fit):null;
+    return mt||bestMatch(texts,cands);
   }
 
   // ---- 右側能力值：暖色數字，依固定順序對應 ----
@@ -759,8 +776,8 @@ const RECOG=(()=>{
         if(!ti.hasText){row[part]={empty:true};tick();continue}
         const r1=await ocr(ti,{}),r2=await ocr(ti,{whitelist:part==='inf'?INF_WL:whitelist});
         const texts=[r1.text,r2.text].map(t=>(t||'').replace(/\s+/g,''));
-        if(part==='inf'){const p=parseInf(texts);row.inf=p?{...p,raw:texts[0]}:{empty:!texts[1],raw:texts[0]}}
-        else{const m=bestMatch(texts,part==='pre'?slot.preCands:slot.sufCands);row[part]=m?{...m,raw:texts[0]}:{raw:texts[0]}}
+        if(part==='inf'){const p=parseInf(texts,ti.inkR);row.inf=p?{...p,raw:texts[0]}:{empty:!texts[1],raw:texts[0]}}
+        else{const m=matchName(texts,part==='pre'?slot.preCands:slot.sufCands,ti.inkR);row[part]=m?{...m,raw:texts[0]}:{raw:texts[0]}}
         tick();
       }
       rows.push(row);
