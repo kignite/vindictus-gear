@@ -451,7 +451,9 @@ function buildPositions(st,tkeys,allowInf=true){
       if(!cur){warns.push(`${slot.zh}：未選擇目前本體，不考慮更換本體`)}
       else{
         const ra=reapplyList(st,slot.id),ri=hasReInf(st,slot.id);
-        const opts=ITEMS[slot.cat].filter(i=>i.id!==cur.id).map(i=>({...itemOpt(cur.name,i.name,sub(i.stats,cur.stats),1+ra.length+(ri?1:0)),reapply:[{slot:slot.id,n:ra.length,parts:ra,inf:ri}]}));
+        // 只有需重貼的部位才掛 reapply；武器／銀輪／技能飾品是原地升級，附魔改動照常各自一行
+        const needRe=REAPPLY_CATS.includes(slot.cat);
+        const opts=ITEMS[slot.cat].filter(i=>i.id!==cur.id).map(i=>{const o=itemOpt(cur.name,i.name,sub(i.stats,cur.stats),1+ra.length+(ri?1:0));return needRe?{...o,reapply:[{slot:slot.id,n:ra.length,parts:ra,inf:ri}]}:o});
         const p=prune(opts,tkeys);
         if(p.length)positions.push({slot,part:'item',options:p});
       }
