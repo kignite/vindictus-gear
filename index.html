@@ -253,10 +253,10 @@ E('Bloodlust','花瓣',S,'A',['weapon'],{bal:3,spd:5,att:150});
 E('Valor','勇猛',S,'A',['weapon'],{bal:5,spd:4,att:130});
 E('Well-balanced','保持平衡的',P,8,ARMOR,{spd:2,crit:1,cres:-1,bal:1});
 E('Fast','迅速的',P,8,ACC,{spd:5,bal:-8});
-// --- 截圖出現但無數值資料
-U('?熱心','熱心',S,['head','chest','legs']);
-U('?熱情','熱情',S,ACC);
-U('?心靈','心靈',S,ACC);
+E('Significant','有意義',P,8,ACC,{att:15,spd:1});
+E('Berserker','心靈',S,8,ACC,{att:30},'持續恢復少量體力');
+E('Passion','熱情',S,8,ACC,{def:200,stam:2});
+E('Enthusiastic','熱心',S,8,ARMOR,{bal:5,att:282,def:-370});
 
 const EMAP=Object.fromEntries(ENCHANTS.map(e=>[e.id,e]));
 const GOOD_INF=['crit','bal','spd'];
@@ -390,6 +390,8 @@ function migrate(st){
   const w=st.gear.weapon;if(w.polB===undefined)w.polB=0;if(w.polC===undefined)w.polC=0;
   if(st.extra===undefined)st.extra=1;
   if(st.epaulette===undefined)st.epaulette=null;
+  const RENAMED={'?熱心':'Enthusiastic','?熱情':'Passion','?心靈':'Berserker'};
+  for(const s of SLOTS){const g=st.gear[s.id];for(const p of ['pre','suf'])if(RENAMED[g[p]])g[p]=RENAMED[g[p]]}
   if(st.preset===undefined)st.preset=(+st.tgt.bal===250&&+st.tgt.crit===420)?'tw5':'custom';
   return st;
 }
