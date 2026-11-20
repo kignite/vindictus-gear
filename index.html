@@ -933,9 +933,16 @@ function reapplyNote(c,p){
   const n=(c.cost??o.count)+mergedChanges(p,c).reduce((s,x)=>s+(x.cost??(x.opt.count||1)),0);
   return n>1?`（共 ${n} 步：${segs.join('；')}）`:'';
 }
+// 原地升級的部位（附魔與合成保留）：顯示成「升級」而不是「換本體」
+const UPGRADE_CATS=['weapon','rhod','artifact'];
 function changeEl(c,p){
   const o=c.opt,part=c.pos.part;
-  const [cls,txt]=o.kind==='item'&&part==='polish'?KIND.polish:KIND[o.kind];
+  let [cls,txt]=o.kind==='item'&&part==='polish'?KIND.polish:KIND[o.kind];
+  let partLabel=PARTZ[part];
+  if(o.kind==='item'&&part==='item'){
+    if(UPGRADE_CATS.includes(c.pos.slot.cat)){txt='升級';partLabel='升級'}
+    else if(c.pos.slot.id==='epaulette'){txt='裝備';partLabel=''}
+  }
   const isInf=part==='inf';
   let from,to;
   if(o.kind==='item'){from=o.fromLabel;to=o.alts.join(' / ')+reapplyNote(c,p)}
@@ -944,7 +951,7 @@ function changeEl(c,p){
   const steps=c.cost??(o.count||1);
   const delta=o.reapply&&p?mergedChanges(p,c).reduce((d,x)=>{for(const k in x.opt.delta)d[k]=(d[k]||0)+x.opt.delta[k];return d},{...o.delta}):o.delta;
   return h('div',{class:'chg'},h('span',{class:'badge '+cls},txt+(steps>1&&!o.reapply?` ${steps} 步`:'')),
-    `${c.pos.slot.zh} ${PARTZ[c.pos.part]}：${from} → ${to} `,h('span',{class:'d'},`（${statStr(delta)}）`));
+    `${c.pos.slot.zh}${partLabel?' '+partLabel:''}：${from} → ${to} `,h('span',{class:'d'},`（${statStr(delta)}）`));
 }
 function finalEl(p,res){
   const box=h('div',{class:'final'});
