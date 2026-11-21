@@ -389,8 +389,16 @@ const DEFAULT_STATE={
   epaulette:null, // null＝尚未回答，第一次計算時詢問
   preset:'tw5',
 };
-// 目標預設：時空扭曲 V 的三圍門檻
-const PRESETS={tw5:{name:'時空扭曲 V 三圍門檻（平衡 250／暴擊 420）',tgt:{bal:250,crit:420}}};
+// 目標預設：各副本最低入場能力值中的平衡／暴擊（韓服官網更新公告，postno 見註解）
+// 125 第一～五隻王＝S4 Ep12～16 快速戰鬥門檻；時空扭曲以純能力值判定
+const PRESETS={
+  tw5:{name:'時空扭曲 V 三圍門檻（平衡 250／暴擊 420）',tgt:{bal:250,crit:420}},       // 무신의 절해고도 #1259
+  s4e16:{name:'125 第五隻王 快速戰鬥（平衡 214／暴擊 371）',tgt:{bal:214,crit:371}}, // #1254
+  s4e15:{name:'125 第四隻王 快速戰鬥（平衡 202／暴擊 354）',tgt:{bal:202,crit:354}}, // #1235
+  s4e14:{name:'125 第三隻王 快速戰鬥（平衡 190／暴擊 337）',tgt:{bal:190,crit:337}}, // #1212
+  s4e13:{name:'125 第二隻王 快速戰鬥（平衡 178／暴擊 322）',tgt:{bal:178,crit:322}}, // #1194
+  s4e12:{name:'125 第一隻王 快速戰鬥（平衡 168／暴擊 312）',tgt:{bal:168,crit:312}}, // #1181
+};
 const EPAULETTE={bal:2,crit:2};
 // 舊版 localStorage 狀態補欄位
 function migrate(st){
@@ -403,7 +411,7 @@ function migrate(st){
   if(st.epaulette===undefined)st.epaulette=null;
   const RENAMED={'?熱心':'Enthusiastic','?熱情':'Passion','?心靈':'Berserker'};
   for(const s of SLOTS){const g=st.gear[s.id];for(const p of ['pre','suf'])if(RENAMED[g[p]])g[p]=RENAMED[g[p]]}
-  if(st.preset===undefined)st.preset=(+st.tgt.bal===250&&+st.tgt.crit===420)?'tw5':'custom';
+  if(st.preset===undefined)st.preset=Object.keys(PRESETS).find(id=>+st.tgt.bal===PRESETS[id].tgt.bal&&+st.tgt.crit===PRESETS[id].tgt.crit)||'custom';
   return st;
 }
 
