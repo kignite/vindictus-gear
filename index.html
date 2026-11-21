@@ -1130,7 +1130,7 @@ document.querySelectorAll('.mascot-copy').forEach(i=>i.src=$('#mascot').src);
   document.addEventListener('paste',e=>{const it=[...(e.clipboardData||{}).items||[]].find(i=>i.type.startsWith('image/'));if(it)handleImage(it.getAsFile())});
 }
 
-function runSolve(){$('#out').innerHTML='<p class="hint">計算中…</p>';setTimeout(()=>renderOut(solve(state)),10)}
+function runSolve(){const out=$('#out');out.innerHTML='<p class="hint">計算中…</p>';(out.previousElementSibling||out).scrollIntoView({behavior:'smooth',block:'start'});setTimeout(()=>renderOut(solve(state)),10)}
 const missingItems=()=>SLOTS.filter(s=>ITEMS[s.cat]&&!IMAP[state.gear[s.id].item]);
 function askEpaulette(){
   return new Promise(ok=>{
