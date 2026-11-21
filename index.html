@@ -1130,7 +1130,14 @@ document.querySelectorAll('.mascot-copy').forEach(i=>i.src=$('#mascot').src);
   document.addEventListener('paste',e=>{const it=[...(e.clipboardData||{}).items||[]].find(i=>i.type.startsWith('image/'));if(it)handleImage(it.getAsFile())});
 }
 
-function runSolve(){const out=$('#out');out.innerHTML='<p class="hint">計算中…</p>';(out.previousElementSibling||out).scrollIntoView({behavior:'smooth',block:'start'});setTimeout(()=>renderOut(solve(state)),10)}
+function runSolve(){const out=$('#out');out.innerHTML='<p class="hint">計算中…</p>';scrollToOut();setTimeout(()=>{renderOut(solve(state));scrollToOut()},10)}
+// 捲到「方案」標題；若第一個方案因此超出畫面底部，改成讓第一個方案頂到畫面上緣
+function scrollToOut(){
+  const out=$('#out'),head=out.previousElementSibling||out,plan=out.querySelector('.plan');
+  let y=head.getBoundingClientRect().top;
+  if(plan){const r=plan.getBoundingClientRect();if(r.bottom-y>innerHeight)y=r.top-8}
+  scrollTo({top:scrollY+y,behavior:'smooth'})
+}
 const missingItems=()=>SLOTS.filter(s=>ITEMS[s.cat]&&!IMAP[state.gear[s.id].item]);
 function askEpaulette(){
   return new Promise(ok=>{
