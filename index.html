@@ -207,7 +207,7 @@ E('Praise','讚揚',S,4,['aux'],{att:230,crit:4,cres:9});
 E('Madness','瘋狂',S,5,['aux'],{att:230,crit:2,cres:7});
 // --- 技能飾品（神器）
 const ART3={att:700,spd:5,crit:2,bal:2,add:50}, ART4={att:450,spd:5,cres:5};
-E('Indomitable','',P,3,['artifact'],ART3,'使用神器時霸體 20 秒、受傷 -50%');
+E('Indomitable','不屈的',P,3,['artifact'],ART3,'使用神器時霸體 20 秒、受傷 -50%');
 E('Executing','處斷的',P,3,['artifact'],ART3,'依敵人剩餘生命增傷（最高 25%）');
 E('Escalating','',P,3,['artifact'],ART3,'使用神器時追加傷害 +10%');
 E('Amplified','增幅的',P,3,['artifact'],ART3,'使用神器時暴擊傷害 +27');
@@ -242,7 +242,7 @@ E("Chaser's",'',P,5,['ring'],{bal:7,cres:5,hp:-450});
 const RH5={att:-280,spd:5,bal:7,brk:50}, RH6={att:-280,spd:4,bal:5};
 E('Concentrated','專注的',P,5,['rhod'],RH5,'每秒恢復 2 MP');
 E('Stern','果斷的',P,5,['rhod'],RH5,'高機率恢復 125 SP（CD 40 秒）');
-E('Shrewd','',P,5,['rhod'],RH5,'有機率恢復 125 SP');
+E('Shrewd','謹慎的',P,5,['rhod'],RH5,'有機率恢復 125 SP');
 E('Concerted','',P,6,['rhod'],RH6,'高機率恢復 125 SP（CD 40 秒）');
 E('Peaceful','',P,6,['rhod'],RH6,'每秒恢復 2 MP');
 E('Clash','衝突',S,5,['rhod'],{crit:2,brk:100},'觸發時增加攻速（CD 30 秒）');
@@ -667,13 +667,13 @@ const RECOG=(()=>{
     for(let y=Math.round(yc-ch/2)+2;y<yc+ch/2-2;y++)for(let x=Math.round(x0)+3;x<x0+cw-3;x++){n++;if(isSel(d,(y*w+x)*4))sel++}
     return sel/n;
   }
-  // 格子文字 → 放大、白底黑字
-  function cellTextImage(img,x0,yc,cw,ch,scale=3){
+  // 格子文字 → 放大、白底黑字；k＝二值化門檻（背景→最亮之間的比例）
+  function cellTextImage(img,x0,yc,cw,ch,scale=3,k=0.35){
     const {width:w,data:d}=img;
     const xa=Math.round(x0)+2,xb=Math.round(x0+cw)-2,ya=Math.round(yc-ch/2)+1,yb=Math.round(yc+ch/2)-1;
     const W=(xb-xa)*scale,H=(yb-ya)*scale,out=new Uint8ClampedArray(W*H*4);
     const ls=[];for(let y=ya;y<yb;y++)for(let x=xa;x<xb;x++)ls.push(lum(d,(y*w+x)*4));
-    const bg=median(ls),hi=Math.max(...ls),th=bg+(hi-bg)*0.35;
+    const bg=median(ls),hi=Math.max(...ls),th=bg+(hi-bg)*k;
     const L=(xx,yy)=>lum(d,(Math.min(yy,yb-1)*w+Math.min(xx,xb-1))*4);
     for(let Y=0;Y<H;Y++)for(let X=0;X<W;X++){
       const sx=xa+X/scale,sy=ya+Y/scale,x=Math.floor(sx),y=Math.floor(sy),fx=sx-x,fy=sy-y;
@@ -795,10 +795,17 @@ const RECOG=(()=>{
         if(x==null){row[part]={empty:true};tick();continue}
         const ti=cellTextImage(img,x,yc,L.cellW,L.cellH);
         if(!ti.hasText){row[part]={empty:true};tick();continue}
-        const r1=await ocr(ti,{}),r2=await ocr(ti,{whitelist:part==='inf'?INF_WL:whitelist});
-        const texts=[r1.text,r2.text].map(t=>(t||'').replace(/\s+/g,''));
-        if(part==='inf'){const p=parseInf(texts,ti.inkR);row.inf=p?{...p,raw:texts[0]}:{empty:!texts[1],raw:texts[0]}}
-        else{const m=matchName(texts,part==='pre'?slot.preCands:slot.sufCands,ti.inkR);row[part]=m?{...m,raw:texts[0]}:{raw:texts[0]}}
+        // 截圖較糊時 0.35 會把筆畫多的字（擊、獨）糊成一團，再用較高門檻 0.45 各讀一次，比對取最佳；
+        // 仍沒把握才補 0.55（「一擊」的「一」低門檻會被當雜訊）。texts[0]＝0.35 無白名單、texts[1]＝0.35 白名單
+        // inkR 一律以 0.35 為準（字寬常數依此實測）
+        const wl=part==='inf'?INF_WL:whitelist,texts=[];
+        const readAt=async k=>{const im=k===0.35?ti:cellTextImage(img,x,yc,L.cellW,L.cellH,3,k);
+          for(const o of [{},{whitelist:wl}])texts.push(((await ocr(im,o)).text||'').replace(/\s+/g,''))};
+        const decide=()=>part==='inf'?parseInf(texts,ti.inkR):matchName(texts,part==='pre'?slot.preCands:slot.sufCands,ti.inkR);
+        await readAt(0.35);await readAt(0.45);
+        let m=decide();if(!m||!m.confident){await readAt(0.55);m=decide()}
+        if(part==='inf')row.inf=m?{...m,raw:texts[0]}:{empty:!texts[1],raw:texts[0]};
+        else row[part]=m?{...m,raw:texts[0]}:{raw:texts[0]};
         tick();
       }
       rows.push(row);
