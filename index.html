@@ -31,6 +31,7 @@ input[type=number]{width:72px}
 .sock{display:inline-flex;align-items:center;gap:2px;padding:2px;border-radius:5px;border:1px solid transparent}
 .sock.on{background:var(--active);border-color:var(--accent)}
 .sock select{max-width:150px}
+.sock+.sock{margin-left:4px}
 .sock .pick{cursor:pointer;width:18px;height:18px;border-radius:50%;border:1px solid var(--muted);background:none;padding:0}
 .sock.on .pick{background:var(--accent);border-color:var(--accent)}
 .inf input[type=number]{width:46px}
@@ -125,10 +126,10 @@ dialog .btns{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
  </div>
 </section>
 
-<h2>裝備（字首／字尾／精靈合成都只記錄目前選取的那一個）</h2>
+<h2>裝備（字首／字尾只記目前套用的那個；精靈合成兩個插槽都記，藍底＝目前套用，點另一個的圓點可切換）</h2>
 <section class="panel">
   <table>
-    <thead><tr><th>部位</th><th>本體</th><th>字首</th><th>字尾</th><th>精靈合成</th><th title="精靈合成目前生效的那條若不是攻速/暴擊/平衡，允許重洗為 暴擊+2 / 平衡+2 / 攻速+1">可重洗</th></tr></thead>
+    <thead><tr><th>部位</th><th>本體</th><th>字首</th><th>字尾</th><th>精靈合成</th><th title="允許把目前套用的那條精靈合成重洗為 暴擊+2 / 平衡+2 / 攻速+1（預設勾選；改合成的方案排在最後）">可重洗</th></tr></thead>
     <tbody id="gear"></tbody>
   </table>
 </section>
@@ -171,7 +172,7 @@ E('Tragic','悲劇的',P,3,['weapon'],{att:700,spd:8,crit:8,bal:4});
 E('Revenge','復仇的',P,4,['weapon'],{att:550,spd:8,crit:6,bal:2});
 E('Brutal','',P,5,['weapon'],{att:430,spd:8,crit:4,bal:2});
 E('Chaotic','渾沌的',P,6,['weapon'],{att:340,spd:4,crit:9,cres:-4});
-E('Calm','',P,6,['weapon','rhod'],{att:-280,spd:4,bal:5},'高機率恢復 125 SP');
+E('Calm','擺好姿勢的',P,6,['weapon','rhod'],{att:-280,spd:4,bal:5},'高機率恢復 125 SP');
 E('Echo','迴響',S,3,['weapon'],{att:1060,spd:3,crit:13,bal:-1});
 E('Strike','一擊',S,4,['weapon'],{att:1030,spd:3,crit:10,bal:-1});
 E('Enmity','怨恨',S,5,['weapon'],{att:1000,spd:3,crit:7,bal:-1});
@@ -197,7 +198,7 @@ E('Advance','',S,5,['head','legs'],{att:285,def:280,crit:5,cres:7});
 E('Lament','悲嘆',S,5,['chest'],{def:120,stam:5,crit:9,cres:10,bal:-1});
 E('Frenzy','狂暴',S,5,['hands','feet'],{att:465,def:-300,spd:1,cres:5,bal:7});
 E('Soul','',S,6,['hands','feet'],{att:465,def:-300,spd:1,cres:3,bal:5});
-E('Dash','',S,6,[...ARMOR,'rhod'],{},'觸發時增加攻擊速度');
+E('Dash','疾走',S,6,[...ARMOR,'rhod'],{},'觸發時增加攻擊速度');
 E('Capture','',S,6,['head','legs'],{att:285,def:280,crit:3,cres:5});
 // --- 護符（盾牌/魔導書/巨盾/圖騰）
 E('Hollow','虛無的',P,3,['aux'],{def:1000,spd:1,crit:4,cres:8});
@@ -239,15 +240,22 @@ E('Wandering','徬徨的',P,3,['ring'],{bal:12,cres:5,hp:-450});
 E('Adversarial','對立的',P,4,['ring'],{bal:9,cres:5,hp:-450});
 E("Chaser's",'',P,5,['ring'],{bal:7,cres:5,hp:-450});
 // --- 銀輪（羅德羅盤）
-const RH5={att:-280,spd:5,bal:7,brk:50}, RH6={att:-280,spd:4,bal:5};
+// 中文名依台服卷軸箱；同階三個字首數值相同，只差效果（MP／高機率 CD40／機率）
+const RH5={att:-280,spd:5,bal:7,brk:50}, RH6={att:-280,spd:4,bal:5}, RH7={att:-280,spd:3,bal:4};
 E('Concentrated','專注的',P,5,['rhod'],RH5,'每秒恢復 2 MP');
 E('Stern','果斷的',P,5,['rhod'],RH5,'高機率恢復 125 SP（CD 40 秒）');
 E('Shrewd','謹慎的',P,5,['rhod'],RH5,'有機率恢復 125 SP');
-E('Concerted','',P,6,['rhod'],RH6,'高機率恢復 125 SP（CD 40 秒）');
-E('Peaceful','',P,6,['rhod'],RH6,'每秒恢復 2 MP');
+E('Concerted','堅決的',P,6,['rhod'],RH6,'高機率恢復 125 SP（CD 40 秒）');
+E('Peaceful','平穩的',P,6,['rhod'],RH6,'每秒恢復 2 MP');
 E('Clash','衝突',S,5,['rhod'],{crit:2,brk:100},'觸發時增加攻速（CD 30 秒）');
 E('Charge','突進',S,5,['rhod'],{crit:2,brk:100},'觸發時增加攻速');
-E('Outburst','',S,6,['rhod'],{},'觸發時增加攻速（CD 30 秒）');
+E('Outburst','爆裂',S,6,['rhod'],{},'觸發時增加攻速（CD 30 秒）');
+// R7：銀輪限定，也列為可貼的新卷（見 isNewable）
+E('Meditating','冥想的',P,7,['rhod'],RH7,'每秒恢復 2 MP');
+E('Resolved','決意的',P,7,['rhod'],RH7,'高機率恢復 125 SP（CD 40 秒）');
+E('Quiet','幽靜的',P,7,['rhod'],RH7,'有機率恢復 125 SP');
+E('Stroll','散步',S,7,['rhod'],{crit:-1,cres:-1},'觸發時增加攻速');
+E('Ardor','熱烈',S,7,['rhod'],{crit:-1,cres:-1},'觸發時增加攻速（CD 30 秒）');
 // --- 低階（Rank 7 以下）：只在「已在插槽中」時用於切換，不會被建議為新捲軸
 E('Bloodlust','花瓣',S,'A',['weapon'],{bal:3,spd:5,att:150});
 E('Valor','勇猛',S,'A',['weapon'],{bal:5,spd:4,att:130});
@@ -259,7 +267,6 @@ E('Passion','熱情',S,8,ACC,{def:200,stam:2});
 E('Enthusiastic','熱心',S,8,ARMOR,{bal:5,att:282,def:-370});
 
 const EMAP=Object.fromEntries(ENCHANTS.map(e=>[e.id,e]));
-const GOOD_INF=['crit','bal','spd'];
 const POOL=[{stat:'crit',val:2},{stat:'bal',val:2},{stat:'spd',val:1}];
 // 防具五件的精靈合成洗不出三圍，不列入重洗
 const canReroll=cat=>!ARMOR.includes(cat);
@@ -348,8 +355,9 @@ function ringPairStats(a,b){
 }
 
 const L=(stat,val)=>({stat,val});
-// 字首/字尾/精靈合成都只保留目前選取的那一個
-function G(pre,preA,suf,sufA,inf,infA){return {pre:pre[preA]||'',suf:suf[sufA]||'',inf:(inf||[L('',0)])[infA||0]}}
+// 字首/字尾只記目前套用的那個；精靈合成兩個插槽都記：inf＝目前套用、inf2＝另一個（可切換）
+function G(pre,preA,suf,sufA,inf,infA){inf=inf||[L('',0),L('',0)];infA=infA||0;
+  return {pre:pre[preA]||'',suf:suf[sufA]||'',inf:inf[infA],inf2:inf[1-infA]||L('',0)}}
 const DEFAULT_GEAR={
   weapon:  G(['Chaotic','Tragic'],1,['Strike','Bloodlust'],0,[L('crit',2),L('spd',1)]),
   aux:     G(['Hollow',''],0,['Praise',''],0,[L('crit',2),L('spd',1)]),
@@ -369,7 +377,7 @@ const DEFAULT_GEAR={
   bracelet1:G(['',''],0,['',''],0),
   bracelet2:G(['',''],0,['',''],0),
 };
-for(const k in DEFAULT_GEAR){const g=DEFAULT_GEAR[k],cat=SLOTS.find(s=>s.id===k).cat;g.reroll=canReroll(cat)&&!!(g.inf.stat&&!GOOD_INF.includes(g.inf.stat));g.item=''}
+for(const k in DEFAULT_GEAR){const g=DEFAULT_GEAR[k],cat=SLOTS.find(s=>s.id===k).cat;g.reroll=canReroll(cat);g.item=''}
 DEFAULT_GEAR.weapon.polB=0;DEFAULT_GEAR.weapon.polC=0;
 const DEFAULT_STATE={
   gear:DEFAULT_GEAR,
@@ -385,8 +393,9 @@ const EPAULETTE={bal:2,crit:2};
 // 舊版 localStorage 狀態補欄位
 function migrate(st){
   for(const s of SLOTS){const og=st.gear[s.id];if(og){for(const p of ['pre','suf'])if(Array.isArray(og[p])){og[p]=og[p][og[p+'A']||0]||'';delete og[p+'A']}
-      if(Array.isArray(og.inf)){og.inf=og.inf[og.infA||0]||L('',0);delete og.infA}}
-    if(!st.gear[s.id])st.gear[s.id]=JSON.parse(JSON.stringify(DEFAULT_GEAR[s.id]));const g=st.gear[s.id];if(g.item===undefined)g.item=''}
+      if(Array.isArray(og.inf)){const a=og.infA||0;og.inf2=og.inf[1-a]||L('',0);og.inf=og.inf[a]||L('',0);delete og.infA}}
+    if(!st.gear[s.id])st.gear[s.id]=JSON.parse(JSON.stringify(DEFAULT_GEAR[s.id]));const g=st.gear[s.id];if(g.item===undefined)g.item='';
+    if(!g.inf2)g.inf2=L('',0)}
   const w=st.gear.weapon;if(w.polB===undefined)w.polB=0;if(w.polC===undefined)w.polC=0;
   if(st.extra===undefined)st.extra=1;
   if(st.epaulette===undefined)st.epaulette=null;
@@ -396,7 +405,8 @@ function migrate(st){
   return st;
 }
 
-const isNewable=e=>typeof e.rank==='number'&&e.rank<=6;
+// 可貼的新卷：R6 以上；銀輪另外開放 R7（成本 7-R7=0，同步數時排在 R6 前面）
+const isNewable=e=>typeof e.rank==='number'&&(e.rank<=6||e.rank===7&&e.cats.includes('rhod'));
 function sub(a,b){const r={};for(const[k] of STATS){const v=(a[k]||0)-(b[k]||0);if(v)r[k]=v}return r}
 function infStats(l){return l&&l.stat&&l.stat!=='other'?{[l.stat]:+l.val||0}:{}}
 function sameLine(a,b){return !!a&&!!b&&a.stat===b.stat&&+a.val===+b.val}
@@ -439,9 +449,11 @@ function buildPositions(st,tkeys,allowInf=true){
       const p=prune(opts,tkeys);
       if(p.length)positions.push({slot,part,options:p});
     }
-    if(!slot.noInf&&allowInf){
-      const cur=g.inf,base=infStats(cur),opts=[];
-      if(g.reroll&&canReroll(slot.cat))for(const l of POOL)if(!sameLine(l,cur))opts.push({kind:'reroll',cost:1,from:cur,to:l,delta:sub(infStats(l),base)});
+    if(!slot.noInf){
+      // 切換合成插槽：只是在配戴插槽設定點一下 → 不算步數、也不算「改精靈合成」，不動合成的那一輪也可以用
+      const cur=g.inf,alt=g.inf2,base=infStats(cur),opts=[],hasAlt=alt&&alt.stat&&alt.stat!=='other'&&!sameLine(alt,cur);
+      if(hasAlt)opts.push({kind:'iswitch',cost:0,count:0,from:cur,to:alt,delta:sub(infStats(alt),base)});
+      if(allowInf&&g.reroll&&canReroll(slot.cat))for(const l of POOL)if(!sameLine(l,cur)&&!(hasAlt&&sameLine(l,alt)))opts.push({kind:'reroll',cost:1,from:cur,to:l,delta:sub(infStats(l),base)});
       const p=prune(opts,tkeys);
       if(p.length)positions.push({slot,part:'inf',options:p});
     }
@@ -507,12 +519,15 @@ function search(st,{K,allowInf=true,timeLimit=4000,maxResults=20000}){
   const {positions,warns}=buildPositions(st,tkeys,allowInf);
   const n=positions.length;
   const top=Array.from({length:n+1},()=>({}));
+  // 剪枝上界：要花步數的選項取前 K 大；不花步數的（切換合成）全部加上
+  const isFree=o=>(o.count??1)===0;
   for(const k of tkeys){
-    let arr=[];top[n][k]=[0];
+    let arr=[],free=0;top[n][k]=[0];
     for(let i=n-1;i>=0;i--){
-      const best=Math.max(0,...positions[i].options.map(o=>o.delta[k]||0));
-      arr=[...arr,best].sort((x,y)=>y-x).slice(0,K);
-      const pre=[0];for(const v of arr)pre.push(pre[pre.length-1]+v);
+      const os=positions[i].options;
+      arr=[...arr,Math.max(0,...os.filter(o=>!isFree(o)).map(o=>o.delta[k]||0))].sort((x,y)=>y-x).slice(0,K);
+      free+=Math.max(0,...os.filter(isFree).map(o=>o.delta[k]||0));
+      const pre=[free];for(const v of arr)pre.push(pre[pre.length-1]+v);
       top[i][k]=pre;
     }
   }
@@ -521,18 +536,18 @@ function search(st,{K,allowInf=true,timeLimit=4000,maxResults=20000}){
   const t0=Date.now();let nodes=0,truncated=false,used=0;
   const encDisc={};// 每格已選的「取代原本附魔」數：換本體時這些本來就要重貼，不重複計步
   const infDisc={};// 每格是否已選「重洗合成」：換本體時本來就要重做合成，不重複計步
-  const effCost=(pos,o)=>o.reapply?o.reapply.reduce((s,r)=>s+1+r.n-Math.min(r.n,encDisc[r.slot]||0)+(r.inf&&!infDisc[r.slot]?1:0),0):(o.count||1);
+  const effCost=(pos,o)=>o.reapply?o.reapply.reduce((s,r)=>s+1+r.n-Math.min(r.n,encDisc[r.slot]||0)+(r.inf&&!infDisc[r.slot]?1:0),0):(o.count??1);
   const ok=()=>tkeys.every(k=>acc[k]>=need[k]);
   function dfs(start){
     if(truncated)return;
     if(++nodes%4096===0&&Date.now()-t0>timeLimit){truncated=true;return}
     if(ok()){raw.push(chosen.slice());if(raw.length>=maxResults)truncated=true;return}
-    const left=K-used;if(left<=0)return;
+    const left=K-used;if(left<0)return;
     for(const k of tkeys){const pre=top[start][k];if(acc[k]+pre[Math.min(left,pre.length-1)]<need[k])return}
     for(let i=start;i<n;i++){
       for(const o of positions[i].options){
         const pos=positions[i],c=effCost(pos,o);if(c>left)continue;
-        const isEnc=(pos.part==='pre'||pos.part==='suf')&&o.replaces,isInf=pos.part==='inf';
+        const isEnc=(pos.part==='pre'||pos.part==='suf')&&o.replaces,isInf=o.kind==='reroll';
         if(isEnc)encDisc[pos.slot.id]=(encDisc[pos.slot.id]||0)+1;
         if(isInf)infDisc[pos.slot.id]=(infDisc[pos.slot.id]||0)+1;
         for(const k of tkeys)acc[k]+=o.delta[k]||0;
@@ -550,11 +565,11 @@ function search(st,{K,allowInf=true,timeLimit=4000,maxResults=20000}){
   // 可達上限（不限步數）判斷是否根本無解
   const maxGain={};for(const k of tkeys)maxGain[k]=positions.reduce((s,p)=>s+Math.max(0,...p.options.map(o=>o.delta[k]||0)),0);
   const impossible=tkeys.filter(k=>maxGain[k]<need[k]);
-  const maxSteps=positions.reduce((s,p)=>s+Math.max(...p.options.map(o=>o.count||1)),0);
+  const maxSteps=positions.reduce((s,p)=>s+Math.max(...p.options.map(o=>o.count??1)),0);
   return {raw,maxSteps,warns,truncated,nodes,tkeys,targets,need,impossible,already:tkeys.length>0&&raw.length===1&&raw[0].length===0};
 }
 
-const isInfC=c=>c.opt.kind==='iswitch'||c.opt.kind==='reroll';
+const isInfC=c=>c.opt.kind==='reroll';
 function toPlans(raws,tkeys,need){
   const sat=ch=>tkeys.every(k=>ch.reduce((s,c)=>s+(c.opt.delta[k]||0),0)>=need[k]);
   const seen=new Set(),plans=[];
@@ -566,9 +581,9 @@ function toPlans(raws,tkeys,need){
     plans.push({
       changes:ch,delta,
       inf:ch.filter(isInfC).length,
-      total:ch.reduce((s,c)=>s+(c.cost??(c.opt.count||1)),0),
-      redo:ch.reduce((s,c)=>s+(c.opt.reapply||[]).filter(r=>r.inf&&!ch.some(x=>x.pos.part==='inf'&&x.pos.slot.id===r.slot)).length,0),
-      sw:ch.filter(c=>c.opt.kind==='switch').length,
+      total:ch.reduce((s,c)=>s+(c.cost??(c.opt.count??1)),0),
+      redo:ch.reduce((s,c)=>s+(c.opt.reapply||[]).filter(r=>r.inf&&!ch.some(x=>x.opt.kind==='reroll'&&x.pos.slot.id===r.slot)).length,0),
+      sw:ch.filter(c=>c.opt.kind==='iswitch').length,
       rankCost:ch.reduce((s,c)=>s+(c.opt.kind==='scroll'?c.opt.cost:0),0),
       over:tkeys.reduce((s,k)=>s+(delta[k]||0)-need[k],0),
     });
@@ -592,7 +607,7 @@ function solve(st,{maxDepth=80,budget=15000}={}){
     if(probe.impossible.length){if(allowInf)res.impossible=probe.impossible;continue}
     let found=false;
     const lastK=Math.min(maxDepth,probe.maxSteps);
-    for(let K=1;K<=lastK;K++){
+    for(let K=0;K<=lastK;K++){
       const left=budget-(Date.now()-t0);if(left<=0){res.truncated=true;break}
       const r=search(st,{K,allowInf,timeLimit:left});
       if(r.truncated)res.truncated=true;
@@ -788,24 +803,33 @@ const RECOG=(()=>{
     for(let r=0;r<slots.length;r++){
       const slot=slots[r],yc=L.rows[r],row={};
       if(slot.cat){row.iconSig=iconSig(img,L.iconX,yc-L.iconSz/2,L.iconSz);row.item=slot.cat==='aux'?auxTier(row.iconSig):refs&&matchIcon(row.iconSig,refs,slot.cat)}
-      for(const [gi,part] of [[0,'inf'],[1,'pre'],[2,'suf']]){
-        const a=L.cols[gi*2],b=L.cols[gi*2+1];
-        const fa=selFrac(img,a,yc,L.cellW,L.cellH),fb=selFrac(img,b,yc,L.cellW,L.cellH);
-        const x=fa>0.3?a:fb>0.3?b:null;
-        if(x==null){row[part]={empty:true};tick();continue}
+      // 讀一格：截圖較糊時 0.35 會把筆畫多的字（擊、獨）糊成一團，再用較高門檻 0.45 各讀一次，比對取最佳；
+      // 仍沒把握才補 0.55（「一擊」的「一」低門檻會被當雜訊）。texts[0]＝0.35 無白名單、texts[1]＝0.35 白名單
+      // inkR 一律以 0.35 為準（字寬常數依此實測）
+      const readCell=async(x,part)=>{
         const ti=cellTextImage(img,x,yc,L.cellW,L.cellH);
-        if(!ti.hasText){row[part]={empty:true};tick();continue}
-        // 截圖較糊時 0.35 會把筆畫多的字（擊、獨）糊成一團，再用較高門檻 0.45 各讀一次，比對取最佳；
-        // 仍沒把握才補 0.55（「一擊」的「一」低門檻會被當雜訊）。texts[0]＝0.35 無白名單、texts[1]＝0.35 白名單
-        // inkR 一律以 0.35 為準（字寬常數依此實測）
+        if(!ti.hasText)return {empty:true,inkR:0};
         const wl=part==='inf'?INF_WL:whitelist,texts=[];
         const readAt=async k=>{const im=k===0.35?ti:cellTextImage(img,x,yc,L.cellW,L.cellH,3,k);
           for(const o of [{},{whitelist:wl}])texts.push(((await ocr(im,o)).text||'').replace(/\s+/g,''))};
         const decide=()=>part==='inf'?parseInf(texts,ti.inkR):matchName(texts,part==='pre'?slot.preCands:slot.sufCands,ti.inkR);
         await readAt(0.35);await readAt(0.45);
         let m=decide();if(!m||!m.confident){await readAt(0.55);m=decide()}
-        if(part==='inf')row.inf=m?{...m,raw:texts[0]}:{empty:!texts[1],raw:texts[0]};
-        else row[part]=m?{...m,raw:texts[0]}:{raw:texts[0]};
+        if(part==='inf')return m?{...m,raw:texts[0],inkR:ti.inkR}:{empty:!texts[1],raw:texts[0],inkR:ti.inkR};
+        return m?{...m,raw:texts[0],inkR:ti.inkR}:{raw:texts[0],inkR:ti.inkR};
+      };
+      for(const [gi,part] of [[0,'inf'],[1,'pre'],[2,'suf']]){
+        const a=L.cols[gi*2],b=L.cols[gi*2+1];
+        const fa=selFrac(img,a,yc,L.cellW,L.cellH),fb=selFrac(img,b,yc,L.cellW,L.cellH);
+        const x=fa>0.3?a:fb>0.3?b:null;
+        if(x==null){row[part]={empty:true};if(part==='inf')row.inf2={empty:true};tick();continue}
+        row[part]=await readCell(x,part);
+        // 精靈合成另一個插槽（未套用）：鎖頭圖示、「-」寬度不到 2 個字 → 視為空；對不上也當空，不標不確定
+        if(part!=='inf'){tick();continue}
+        const ti2=cellTextImage(img,x===a?b:a,yc,L.cellW,L.cellH);
+        let r2={empty:true};
+        if(ti2.hasText&&ti2.inkR>=0.8){r2=await readCell(x===a?b:a,part);if(!r2.key&&!r2.stat)r2={empty:true,raw:r2.raw}}
+        row[part+'2']=r2;
         tick();
       }
       rows.push(row);
@@ -869,6 +893,12 @@ function renderStats(){
   ex.onchange=e=>{state.extra=+e.target.value;save()};
 }
 
+// 精靈合成兩個插槽：第一個是目前套用的（藍底），點另一個的圓點＝切換套用
+function sockPair(g,key,mk){
+  const swap=()=>{[g[key],g[key+'2']]=[g[key+'2'],g[key]];save();renderGear()};
+  return [key,key+'2'].map((k,i)=>h('span',{class:'sock'+(i===0?' on':'')},
+    h('button',{class:'pick',title:i===0?'目前套用中':'改成套用這個插槽',onclick:i===0?null:swap}),...mk(k)));
+}
 function sockCell(slot,g,part){
   const wrap=h('td');
   if(slot.noEnchant){wrap.append(h('span',{class:'d'},'—'));return wrap}
@@ -882,11 +912,12 @@ function sockCell(slot,g,part){
 function infCell(slot,g){
   const td=h('td',{class:'inf'});
   if(slot.noInf){td.append(h('span',{class:'d'},'—'));return td}
-  const l=g.inf;
-  const sel=h('select',{onchange:e=>{l.stat=e.target.value;save()}});
-  for(const[v,t]of INF_STATS)sel.append(h('option',{value:v,selected:l.stat===v},t));
-  const num=h('input',{type:'number',value:l.val,oninput:e=>{l.val=+e.target.value;save()}});
-  td.append(sel,num);
+  td.append(...sockPair(g,'inf',k=>{
+    const l=g[k];
+    const sel=h('select',{onchange:e=>{l.stat=e.target.value;save()}});
+    for(const[v,t]of INF_STATS)sel.append(h('option',{value:v,selected:l.stat===v},t));
+    return [sel,h('input',{type:'number',value:l.val,oninput:e=>{l.val=+e.target.value;save()}})];
+  }));
   return td;
 }
 function itemCell(slot,g){
@@ -915,7 +946,7 @@ function renderGear(){
   }
 }
 
-const KIND={switch:['switch','切換插槽'],scroll:['scroll','貼新捲軸'],iswitch:['inf','切換合成'],reroll:['inf','重洗合成'],item:['scroll','換本體'],polish:['scroll','精練']};
+const KIND={switch:['switch','切換插槽'],scroll:['scroll','貼新捲軸'],iswitch:['switch','切換合成'],reroll:['inf','重洗合成'],item:['scroll','換本體'],polish:['scroll','精練']};
 // 換本體時，同一格的附魔／合成改動都是「換完本體後在新裝備上做」→ 併入換本體那一行
 const MERGE_PARTS=['pre','suf','inf'];
 function swapOf(p,c){
@@ -981,7 +1012,7 @@ function renderOut(res){
   if(res.already){out.append(h('p',{},'目前裝備已達成目標，不需改動。'));return}
   const mk=res.minK;
   const minTxt=[mk.noInf!=null?`不動精靈合成最少 ${mk.noInf} 步`:'不動精靈合成無解',mk.inf!=null?`含精靈合成最少 ${mk.inf} 步`:''].filter(Boolean).join('；');
-  out.append(h('p',{class:'hint'},`${minTxt}。共 ${res.plans.length} 個方案（每個都是「少任何一步就達不到」的最小組合）。排序：精靈合成改動數 → 總改動數 → 捲軸等級。精練一次到滿算 1 步；護符、戒指、耳環、腰帶、胸針、項鍊換本體時，原本的字首／字尾要重貼（每張算 1 步），精靈合成也要重做（每件算 1 步）。`+(res.truncated?' ⚠ 搜尋因時間/數量上限被截斷，結果可能不完整，可把「列出範圍」改成只列最少步數。':'')));
+  out.append(h('p',{class:'hint'},`${minTxt}。共 ${res.plans.length} 個方案（每個都是「少任何一步就達不到」的最小組合）。排序：精靈合成改動數 → 總改動數 → 捲軸等級。切換精靈合成插槽（改用另一格已有的合成）不算步數、也不算改合成；精練一次到滿算 1 步；護符、戒指、耳環、腰帶、胸針、項鍊換本體時，原本的字首／字尾要重貼（每張算 1 步），精靈合成也要重做（每件算 1 步）。`+(res.truncated?' ⚠ 搜尋因時間/數量上限被截斷，結果可能不完整，可把「列出範圍」改成只列最少步數。':'')));
   if(!res.plans.length){
     out.append(h('p',{},res.impossible.length?`即使全部升到最高也達不到：${res.impossible.map(k=>SZ[k]).join('、')}。`
       :res.infeasible?'不限步數也無法同時達成所有目標（各項單獨可達，但選項之間互相衝突，例如同一條合成只能是暴擊或平衡）。'
@@ -1059,8 +1090,12 @@ function applyRecognition(slots,res){
     let inf;const x=r.inf;
     if(x.stat){g.inf={stat:x.stat,val:x.val};inf=infLabel(g.inf)+(x.confident?'':'（不確定）');if(!x.confident)flags.push('inf')}
     else{g.inf={stat:'',val:0};inf=x.empty?'（無）':`無法辨識「${x.raw||'?'}」`;if(!x.empty)flags.push('inf')}
-    g.reroll=canReroll(SLOTS.find(z=>z.id===s.id).cat)&&!!(g.inf.stat&&!GOOD_INF.includes(g.inf.stat));
-    rows.push({zh:s.zh,itemTxt,pre,suf,inf,flags});
+    const x2=r.inf2;let inf2='';
+    if(x2&&x2.stat){g.inf2={stat:x2.stat,val:x2.val};inf2=infLabel(g.inf2)+(x2.confident?'':'（不確定）');if(!x2.confident)flags.push('inf')}
+    else g.inf2={stat:'',val:0};
+    g.reroll=canReroll(SLOTS.find(z=>z.id===s.id).cat);
+    const w=(a,b)=>b?`${a} ／ ${b}`:a;
+    rows.push({zh:s.zh,itemTxt,pre,suf,inf:w(inf,inf2),flags});
   });
   const st=res.stats,got=[];
   for(const k of ['bal','crit','spd'])if(st[k]!=null){state.cur[k]=st[k];got.push(`${SZ[k]} ${st[k]}`)}
@@ -1071,7 +1106,7 @@ function applyRecognition(slots,res){
   const tb=h('tbody');
   for(const r of rows){const c=(txt,key)=>h('td',{class:r.flags.includes(key)?'unsure':''},txt);
     tb.append(h('tr',{class:r.flags.length?'flag':''},h('td',{},r.zh),c(r.itemTxt,'item'),c(r.pre,'pre'),c(r.suf,'suf'),c(r.inf,'inf')))}
-  $('#recogOut').append(h('table',{class:'rep'},h('thead',{},h('tr',{},...['部位','本體','字首','字尾','精靈合成'].map(t=>h('th',{},t)))),tb));
+  $('#recogOut').append(h('table',{class:'rep'},h('thead',{},h('tr',{},...['部位','本體','字首','字尾','精靈合成（套用／另一個）'].map(t=>h('th',{},t)))),tb));
 }
 document.querySelectorAll('.mascot-copy').forEach(i=>i.src=$('#mascot').src);
 {
@@ -1135,7 +1170,7 @@ $('#run').onclick=async()=>{
 // 清除：全部欄位留空，目標回到預設門檻
 function blankState(){
   const gear={};
-  for(const s of SLOTS)gear[s.id]={pre:'',suf:'',inf:{stat:'',val:0},item:'',reroll:false};
+  for(const s of SLOTS)gear[s.id]={pre:'',suf:'',inf:{stat:'',val:0},inf2:{stat:'',val:0},item:'',reroll:canReroll(s.cat)};
   gear.weapon.polB=0;gear.weapon.polC=0;
   return migrate({gear,cur:{bal:'',crit:'',spd:''},tgt:{...PRESETS.tw5.tgt,spd:''},extra:1,epaulette:null,preset:'tw5'});
 }
