@@ -210,13 +210,15 @@ E('Madness','瘋狂',S,5,['aux'],{att:230,crit:2,cres:7});
 const ART3={att:700,spd:5,crit:2,bal:2,add:50}, ART4={att:450,spd:5,cres:5};
 E('Indomitable','不屈的',P,3,['artifact'],ART3,'使用神器時霸體 20 秒、受傷 -50%');
 E('Executing','處斷的',P,3,['artifact'],ART3,'依敵人剩餘生命增傷（最高 25%）');
-E('Escalating','',P,3,['artifact'],ART3,'使用神器時追加傷害 +10%');
+E('Escalating','高漲的',P,3,['artifact'],ART3,'使用神器時追加傷害 +10%');
 E('Amplified','增幅的',P,3,['artifact'],ART3,'使用神器時暴擊傷害 +27');
-E('Cyclical','',P,3,['artifact'],ART3,'傷害轉 SP');
-E('Petrify','',P,4,['artifact'],ART4,'霸體、受傷 -30%');
-E('Fading','',P,4,['artifact'],ART4,'傷害轉 SP');
-E('Destructive','',P,4,['artifact'],ART4,'追加傷害 +5%');
+E('Cyclical','循環的',P,3,['artifact'],ART3,'傷害轉 SP');
+E('Petrify','凝固的',P,4,['artifact'],ART4,'霸體、受傷 -30%');
+E('Fading','平息的',P,4,['artifact'],ART4,'傷害轉 SP');
+E('Destructive','破壞的',P,4,['artifact'],ART4,'追加傷害 +5%');
 E('Consume','吞噬的',P,4,['artifact'],ART4,'依敵人剩餘生命增傷（最高 14%）');
+// 台服 R4 有 5 個字首，英文 wiki 只有 4 個：穿透的＝暴擊傷害型（對應 R3 增幅的，使用者確認）；三圍數值比照其他 R4
+E('Piercing','穿透的',P,4,['artifact'],ART4,'使用神器時增加暴擊傷害（對應 R3 增幅的）');
 E('Advent','降臨',S,4,['artifact'],{att:450,crit:2,bal:2,cres:5});
 // --- 飾品通用
 E('Tempestuous','狂風的',P,4,ACC,{att:700,spd:5,crit:-4,bal:-4});
